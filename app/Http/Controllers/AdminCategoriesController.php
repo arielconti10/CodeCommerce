@@ -7,21 +7,18 @@ use Illuminate\Http\Request;
 use CodeCommerce\Http\Requests;
 use CodeCommerce\Category;
 
-class WelcomeController extends Controller
+class AdminCategoriesController extends Controller
 {
     private $categories;
+
     public function __construct(Category $category){
         $this->categories = $category;
     }
 
     public function index(){
-        return view('welcome');
-    }
-    
-    public function example(){
+
         $categories = $this->categories->all();
 
-        return view('example', compact('categories'));
+        return view('admin_category', compact('categories'));
     }
-
 }
