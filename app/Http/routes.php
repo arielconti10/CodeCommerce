@@ -17,14 +17,30 @@ Route::group(['prefix' => 'admin'], function(){
     Route::pattern('category', '[0-9]+');
     Route::pattern('product', '[0-9]+');
 
-    Route::get('categories', 'AdminCategoriesController@index');
-    Route::get('categories/{category}', function(\CodeCommerce\Category $category){
-        return view('admin_category_single', compact('category'));
+    Route::group(['prefix' => 'categories'], function(){
+        Route::get('/', 'AdminCategoriesController@index');
+        Route::get('{category}', function(\CodeCommerce\Category $category){
+            return view('admin_category_single', compact('category'));
+        });
+        Route::post('{category}/edit', function(\CodeCommerce\Category $category){
+            return 'Edit product';
+        });
+        Route::post('{category}/delete', function(\CodeCommerce\Category $category){
+            return 'Delete product';
+        });
     });
 
-    Route::get('products', 'AdminProductsController@index');
-    Route::get('products/{product}', function(\CodeCommerce\Products $product){
-        return view('admin_product_single', compact('product'));
+    Route::group(['prefix' => 'products'], function(){
+        Route::get('/', 'AdminProductsController@index');
+        Route::get('{product}', function(\CodeCommerce\Products $product){
+            return view('admin_product_single', compact('product'));
+        });
+        Route::post('{product}/edit', function(\CodeCommerce\Category $product){
+           return 'Edit product';
+        });
+        Route::post('{product}/delete', function(\CodeCommerce\Category $product){
+            return 'Delete product';
+        });
     });
 
 });
