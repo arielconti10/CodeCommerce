@@ -12,7 +12,10 @@ class AddColumnsToProducts extends Migration
      */
     public function up()
     {
-        //
+        Schema::table('products', function($table){
+           $table->boolean('featured')->default('');
+           $table->boolean('recommended')->default('');
+        });
     }
 
     /**
