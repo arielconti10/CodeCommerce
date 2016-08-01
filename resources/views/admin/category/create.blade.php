@@ -10,7 +10,7 @@
             </ul>
         @endif
         <h1>Create category</h1>
-            {!! Form::open(['route'=>'category.store']) !!}
+            {!! Form::open(['route'=>'categories.store']) !!}
                 <div class="form-group">
                     {!! Form::label('name', 'Name: ') !!}
                     {!! Form::text('name', null, ['class'=>'form-control']) !!}

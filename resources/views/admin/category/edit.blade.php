@@ -3,7 +3,7 @@
     <div class="container">
         <h1>Edit category</h1>
         <div class="row">
-            {!! Form::open(['route' => ['category.update', $category->id], 'method' => 'put']) !!}
+            {!! Form::open(['route' => ['categories.update', $category->id], 'method' => 'put']) !!}
                 <div class="form-group">
                     {!! Form::label('name', 'Name: ') !!}
                     {!! Form::text('name', $category->name, ['class'=>'form-control']) !!}

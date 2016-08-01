@@ -17,7 +17,7 @@ class AdminCategoriesController extends Controller
 
     public function index(){
 
-        $categories = $this->categories->all();
+        $categories = $this->categories->paginate(10);
 
         return view('admin.category.index', compact('categories'));
     }
@@ -34,7 +34,7 @@ class AdminCategoriesController extends Controller
 
         $category->save();
 
-        return redirect()->route('category.index');
+        return redirect()->route('categories');
 
     }
 
@@ -43,7 +43,7 @@ class AdminCategoriesController extends Controller
 
         $category->delete();
 
-        return redirect()->route('category.index');
+        return redirect()->route('categories');
     }
 
     public function edit(Category $category)
@@ -57,7 +57,7 @@ class AdminCategoriesController extends Controller
 
         $category->update($input);
 
-        return redirect()->route('category.index');
+        return redirect()->route('categories');
     }
 
 }
