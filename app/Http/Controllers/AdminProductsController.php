@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use CodeCommerce\Http\Requests;
 use CodeCommerce\Products;
 use CodeCommerce\Category;
-
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 /**
  * Class AdminProductsController
  * @package CodeCommerce\Http\Controllers
@@ -129,14 +130,32 @@ class AdminProductsController extends Controller
         return view('admin.products.create_image', compact('product'));
     }
 
-    public function storeImage(Request $request, Products $product, ProductImage $productImage)
+    public function storeImage(Requests\ProductImageRequest $request, Products $product, ProductImage $productImage)
     {
-
         $file = $request->file('image');
         $extension = $file->getClientOriginalExtension();
 
-        $productImage::create(['product_id' => $product->id, 'extension' => $extension]);
+        $image = $productImage::create(['product_id' => $product->id, 'extension' => $extension]);
 
-        Storage::disk
+        Storage::disk('public')->put($image->id.'.'.$extension, File::get($file));
+
+        return redirect()->route('products.images', ['id' => $product->id]);
     }
+
+    public function destroyImage($id, ProductImage $productImage)
+    {
+        $image = $productImage->find($id);
+
+        if(file_exists(public_path() . '/uploads' . $image->id .'.'.$image->extension)){
+            Storage::disk('public')->delete($image->id.'.'.$image->extension);
+        }
+
+        $product = $image->product;
+
+        $image->delete();
+
+        return redirect()->route('products.images', ['id' => $product->id]);
+
+    }
+
 }
