@@ -146,7 +146,7 @@ class AdminProductsController extends Controller
     {
         $image = $productImage->find($id);
 
-        if(file_exists(public_path() . '/uploads' . $image->id .'.'.$image->extension)){
+        if(file_exists(public_path().'/uploads/'.$image->id.'.'.$image->extension)){
             Storage::disk('public')->delete($image->id.'.'.$image->extension);
         }
 
