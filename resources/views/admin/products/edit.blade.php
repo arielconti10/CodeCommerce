@@ -23,7 +23,8 @@
                     {!! Form::checkbox('featured', null, $product->featured == 1 ? true : false) !!}
                 </div>
                 <div class="form-group">
-
+                    {!! Form::label('tags', 'Tags separadas por vírgula: ') !!}
+                    {!! Form::textarea('tags', $tags, ['class'=>'form-control']) !!}
                 </div>
                 <div class="form-group">
                     {!! Form::label('description', 'Description: ') !!}

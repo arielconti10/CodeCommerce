@@ -31,6 +31,10 @@
                     {!! Form::checkbox('recommended') !!}
                 </div>
                 <div class="form-group">
+                    {!! Form::label('tags', 'Tags separadas por vírgula: ') !!}
+                    {!! Form::textarea('tags', null, ['class'=>'form-control']) !!}
+                </div>
+                <div class="form-group">
                     {!! Form::label('description', 'Description: ') !!}
                     {!! Form::textarea('description', null, ['class'=>'form-control']) !!}
                 </div>

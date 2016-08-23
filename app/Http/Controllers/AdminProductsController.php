@@ -5,8 +5,9 @@ namespace CodeCommerce\Http\Controllers;
 use CodeCommerce\ProductImage;
 use Illuminate\Http\Request;
 use CodeCommerce\Http\Requests;
-use CodeCommerce\Products;
+use CodeCommerce\Product;
 use CodeCommerce\Category;
+use CodeCommerce\Tag;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 /**
@@ -16,15 +17,15 @@ use Illuminate\Support\Facades\File;
 class AdminProductsController extends Controller
 {
     /**
-     * @var Products
+     * @var Product
      */
     private $products;
 
     /**
      * AdminProductsController constructor.
-     * @param Products $product
+     * @param Product $product
      */
-    public function __construct(Products $product){
+    public function __construct(Product $product){
         $this->products = $product;
     }
 
@@ -63,42 +64,65 @@ class AdminProductsController extends Controller
 
         $input['featured'] = $productRequest->get('featured') ? true : false;
         $input['recommended'] = $productRequest->get('recommended') ? true : false;
+        $tags = array_map('trim', explode(',', $input['tags']));
 
         $product = $this->products->fill($input);
+
         $product->save();
 
+        $this->storeTags($tags, $product->id);
+
         return redirect()->route('products');
+    }
+
+    public function storeTags($inputTags, $id)
+    {
+        $tag = new Tag();
+
+        foreach($inputTags as $key => $value){
+            $newTag = $tag->firstOrCreate(['name' => $value]);
+            $idTags[] = $newTag->id;
+        }
+
+        $product = $this->products->find($id);
+        $product->tags()->sync($idTags);
+
     }
 
     /**
      * Return view for edit the specified resource
      *
-     * @param Products $product
+     * @param Product $product
      * @param Category $category
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit(Products $product, Category $category)
+    public function edit(Product $product, Category $category)
     {
         $categories = $category->lists('name', 'id');
+        $tags = $product->getTagListAttributes();
 
-        return view('admin.products.edit', compact('product', 'categories'));
+        return view('admin.products.edit', compact('product', 'categories', 'tags'));
     }
 
     /**
      * Update the specified resource from storage
      *
      * @param Requests\ProductRequest $productRequest
-     * @param Products $product
+     * @param Product $product
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Requests\ProductRequest $productRequest, Products $product)
+    public function update(Requests\ProductRequest $productRequest, Product $product)
     {
         $input = $productRequest->all();
 
         $input['featured'] = $productRequest->get('featured') ? true : false;
         $input['recommended'] = $productRequest->get('recommended')  ? true : false;
+        $tags = array_map('trim', explode(',', $input['tags']));
 
         $product->update($input);
+
+        $this->storeTags($tags, $product->id);
+
 
         return redirect()->route('products');
     }
@@ -106,10 +130,10 @@ class AdminProductsController extends Controller
     /**
      * Remove the specified resource from storage
      *
-     * @param Products $product
+     * @param Product $product
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Products $product)
+    public function destroy(Product $product)
     {
         $product->delete();
 
@@ -117,31 +141,44 @@ class AdminProductsController extends Controller
     }
 
     /**
-     * @param Products $product
+     * @param Product $product
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function images(Products $product)
+    public function images(Product $product)
     {
         return view('admin.products.images', compact('product'));
     }
 
-    public function createImage(Products $product)
+    /**
+     * @param Product $product
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function createImage(Product $product)
     {
         return view('admin.products.create_image', compact('product'));
     }
 
-    public function storeImage(Requests\ProductImageRequest $request, Products $product, ProductImage $productImage)
+    /**
+     * @param Requests\ProductImageRequest $request
+     * @param Product $product
+     * @param ProductImage $productImage
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function storeImage(Requests\ProductImageRequest $request, Product $product, ProductImage $productImage)
     {
         $file = $request->file('image');
         $extension = $file->getClientOriginalExtension();
-
         $image = $productImage::create(['product_id' => $product->id, 'extension' => $extension]);
-
         Storage::disk('public')->put($image->id.'.'.$extension, File::get($file));
 
         return redirect()->route('products.images', ['id' => $product->id]);
     }
 
+    /**
+     * @param $id
+     * @param ProductImage $productImage
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroyImage($id, ProductImage $productImage)
     {
         $image = $productImage->find($id);
@@ -151,11 +188,9 @@ class AdminProductsController extends Controller
         }
 
         $product = $image->product;
-
         $image->delete();
 
         return redirect()->route('products.images', ['id' => $product->id]);
-
     }
 
 }

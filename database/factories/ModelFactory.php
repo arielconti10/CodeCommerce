@@ -26,7 +26,7 @@ $factory->define(CodeCommerce\Category::class, function (Faker\Generator $faker)
         'description' => $faker->sentence
     ];
 });
-$factory->define(CodeCommerce\Products::class, function (Faker\Generator $faker){
+$factory->define(CodeCommerce\Product::class, function (Faker\Generator $faker){
    return[
        'name' => $faker->word,
        'description' => $faker->sentence,
