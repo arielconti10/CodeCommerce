@@ -107,7 +107,7 @@ class AdminProductsController extends Controller
     /**
      * Update the specified resource from storage
      *
-     * @param Requests\ProductRequest $productRequest
+     * @param Requests\ProductRequest $productRequest0
      * @param Product $product
      * @return \Illuminate\Http\RedirectResponse
      */
