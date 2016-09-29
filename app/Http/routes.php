@@ -12,6 +12,7 @@
 */
 
 Route::get('/', 'StoreController@index');
+Route::get('/{category}', 'StoreController@index');
 
 Route::group(['prefix' => 'admin', 'where' => ['id' => '[0-9]+']], function(){
     Route::pattern('category', '[0-9]+');
