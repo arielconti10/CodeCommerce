@@ -13,12 +13,10 @@ class StoreController extends Controller
 
     public function index(Category $category)
     {
-
         $product_featured = Product::featured()->get();
         $product_recommended = Product::recommended()->get();
         $categories = Category::all();
-
-        if($category){
+        if(!empty($category->id)){
             $products = $category->products()->get();
             return view('store.index', compact('categories', 'products'));
 
